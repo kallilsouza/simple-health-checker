@@ -13,6 +13,7 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 
 
+PORT = os.environ.get("PORT", 5000)
 SITES = [
     {"name": site[0], "url": site[1]}
     for site in [s.split("|") for s in os.environ.get("SITES").split(",")]
@@ -42,4 +43,4 @@ def check_health():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=PORT)
