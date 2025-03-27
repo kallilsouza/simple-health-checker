@@ -20,6 +20,8 @@
             </tr>
         {% endfor %}
     </table></body>
+
+    <div class="last-checked">Last checked: <span id="last-checked">checking...</span></div>
 <style>
     body {
         background-color: rgb(15, 15, 15);
@@ -76,5 +78,46 @@
     .site-status.unknown {
         color: yellow;
     }
+    
+    .last-checked {
+        text-align: center;
+        font-size: 20px;
+        font-weight: bold;
+        margin-top: 20px;
+    }
+    #last-checked {
+        color: yellow;
+    }
 </style>
+
+<script>
+    function checkHealth() {
+        fetch('/check-health')
+            .then(response => response.json())
+            .then(data => {
+                for (const site in data) {
+                    const statusElement = document.getElementById(`site-status-${site}`);
+                    if (data[site]) {
+                        statusElement.textContent = 'Up';
+                        statusElement.classList.remove('down');
+                        statusElement.classList.remove('unknown');
+                        statusElement.classList.add('up');
+                    } else {
+                        statusElement.textContent = 'Down';
+                        statusElement.classList.remove('up');
+                        statusElement.classList.remove('unknown');
+                        statusElement.classList.add('down');
+                    }
+                }
+                document.getElementById('last-checked').textContent = new Date().toLocaleString();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    checkHealth();
+
+    setInterval(checkHealth, 5000); // Check health every 5 seconds
+</script>
 </html>
