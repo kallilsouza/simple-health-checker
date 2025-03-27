@@ -17,6 +17,7 @@ SITES = [
     {"name": site[0], "url": site[1]}
     for site in [s.split("|") for s in os.environ.get("SITES").split(",")]
 ]
+TIMEOUT = 5
 
 
 @app.route("/")
@@ -31,7 +32,7 @@ def check_health():
     for site in SITES:
         try:
             logger.info("Checking health for %s", site["name"])
-            response = requests.get(site["url"])
+            response = requests.get(site["url"], timeout=TIMEOUT)
             health[site["name"]] = response.status_code == 200
         except Exception as e:
             logger.error("Error checking health for %s: %s", site["name"], e)
